@@ -1,0 +1,60 @@
+.post-title-input {
+    border: none;
+    resize: none;
+    margin: .67em 0;
+    height: 2em;
+    width: 100%;
+    font-size: 2.6em
+}
+
+.medium-editor-placeholder-relative {
+    color: lightgray;
+    font-style: normal;
+}
+
+.navbar {
+    padding-top: 1.5em;
+}
+
+.navbar-title {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: 0 auto;
+    z-index: 0;
+}
+
+.navbar-right,
+.navbar-left {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-nav {
+    border-radius: .5em;
+    border-style: solid;
+    padding: .5em 1em;
+    background-color: transparent;
+}
+
+.btn-register {
+    color: #03a87c;
+    border-color: #03a87c;
+}
+
+.btn-register:hover {
+    color: #0c7a5c;
+    border-color: #0c7a5c;
+    text-decoration: none;
+}
+
+.btn-login {
+    color: #03a87c;
+    margin-right: 2em;
+}
+
+.btn-login:hover {
+    text-decoration: none;
+    color: #0c7a5c;
+}

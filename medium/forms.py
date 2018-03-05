@@ -38,6 +38,6 @@ class PostForm(forms.ModelForm):
         fields = ('title', 'content')
 
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'post-title-input'}),
-            'content': forms.TextInput(attrs={'class': 'editable medium-editor-textarea post-content-input'}),
+            'title': forms.Textarea(attrs={'class': 'post-title-input', 'placeholder': 'Title'}),
+            'content': forms.Textarea(attrs={'class': 'editable medium-editor-textarea post-content-input', 'placeholder': 'Body'}),
         }
