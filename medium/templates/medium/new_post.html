@@ -1,0 +1,7 @@
+{% extends 'medium/base.html' %} {% block content %}
+<h1>Create New Post</h1>
+<form class="post-form" method="post">
+    {% csrf_token %} {{form.as_p}}
+    <button type="submit" class="save btn btn-default">Save</button>
+</form>
+{% endblock %}

@@ -1,3 +1,18 @@
 {% extends 'medium/base.html' %} {% block content %}
 <h1>Index</h1>
+<div class="center-stage">
+    {% for post in posts_list %}
+    <div class="post">
+        <h1>
+            <a href="{% url 'medium:post' pk=post.pk %}">{{post.title}}</a>
+        </h1>
+        <div class="date">
+            <p>Published on: {{post.created_date|date:"D M Y"}}</p>
+        </div>
+        <!--
+        <a href="{% url 'medium:post' pk=post.pk %}">Comments: {{post.approve_comments.count}}</a>
+        -->
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

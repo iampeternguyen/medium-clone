@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from medium.models import UserProfile
+from medium.models import UserProfile, Post
 from crispy_forms.helper import FormHelper
 
 
@@ -30,3 +30,14 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         exclude = ('user',)
     helper = FormHelper()
+
+
+class PostForm(forms.ModelForm):
+    class Meta():
+        model = Post
+        fields = ('title', 'content')
+
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'post-title-input'}),
+            'content': forms.TextInput(attrs={'class': 'editable medium-editor-textarea post-content-input'}),
+        }

@@ -1,18 +1,41 @@
 from django.shortcuts import render
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
-from medium.forms import UserForm, UserProfileForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from medium.forms import UserForm, UserProfileForm, PostForm
+from medium.models import Post
 # Create your views here.
 
 
 class IndexView(generic.ListView):
     template_name = 'medium/index.html'
+    context_object_name = 'posts_list'
 
     def get_queryset(self):
-        return None
+        return Post.objects.all()
+
+
+class NewPostView(LoginRequiredMixin, generic.CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'medium/index.html'
+    template_name = 'medium/new_post.html'
+    form_class = PostForm
+    model = Post
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.author = self.request.user
+        obj.save()
+        return HttpResponseRedirect(Post.get_absolute_url(self))
+
+
+class PostDetailView(generic.DetailView):
+    model = Post
+    template_name = 'medium/post.html'
 
 
 def register_user(request):
