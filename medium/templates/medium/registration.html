@@ -1,0 +1,14 @@
+{% extends 'medium/base.html' %} {% block content %}
+<h1>Registration</h1>
+{% if registered %}
+<p>Thank you for registering.</p>
+{% else %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %} {% load crispy_forms_tags %}
+    <div class="form-group">
+        {{user_form|crispy}} {{user_profile_form|crispy}}
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+{% endif %} {% endblock %}
