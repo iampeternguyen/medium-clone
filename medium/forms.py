@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from medium.models import UserProfile, Post, ImageUpload
 from crispy_forms.helper import FormHelper
 from mediumeditor.widgets import MediumEditorTextarea
+from froala_editor.widgets import FroalaEditor
 
 
 class UserForm(forms.ModelForm):
@@ -56,5 +57,5 @@ class PostForm(forms.ModelForm):
 
         widgets = {
             'title': forms.Textarea(attrs={'class': 'post-title-input', 'placeholder': 'Title'}),
-            'content': MediumEditorTextarea(),
+            'content': FroalaEditor(),
         }

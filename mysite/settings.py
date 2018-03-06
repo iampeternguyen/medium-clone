@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mediumeditor',
+    'froala_editor',
     'crispy_forms',
     'medium'
 ]

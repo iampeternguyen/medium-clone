@@ -5,9 +5,4 @@ from mediumeditor.admin import MediumEditorAdmin
 
 admin.site.register(UserProfile)
 admin.site.register(ImageUpload)
-
-
-@admin.register(Post)
-class MyModelAdmin(MediumEditorAdmin, admin.ModelAdmin):
-
-    mediumeditor_fields = ('my_text_field', )
+admin.site.register(Post)
