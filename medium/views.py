@@ -1,18 +1,49 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
-from medium.forms import UserForm, UserProfileForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.utils import timezone
+
+from medium.forms import UserForm, UserProfileForm, PostForm
+from medium.models import Post
 # Create your views here.
 
 
 class IndexView(generic.ListView):
     template_name = 'medium/index.html'
+    context_object_name = 'posts_list'
 
     def get_queryset(self):
-        return None
+        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+
+
+class NewPostView(LoginRequiredMixin, generic.CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'medium/post.html'
+    template_name = 'medium/new_post.html'
+    form_class = PostForm
+    model = Post
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class PostDetailView(generic.DetailView):
+    model = Post
+    template_name = 'medium/post.html'
+
+
+class PostEditView(LoginRequiredMixin, generic.UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'medium/post.html'
+    template_name = 'medium/new_post.html'
+    form_class = PostForm
+    model = Post
 
 
 def register_user(request):
@@ -47,6 +78,16 @@ def register_user(request):
     })
 
 
+def search_posts(request):
+    if request.method == 'POST':
+        search = request.POST.get('search')
+        posts_list = Post.objects.filter(
+            Q(title__contains=search) | Q(content__contains=search))
+        return render(request, 'medium/index.html', {'posts_list': posts_list})
+    else:
+        return HttpResponseRedirect(reverse('medium:index'))
+
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -61,6 +102,13 @@ def user_login(request):
             return HttpResponse('invalid login details')
     else:
         return render(request, 'medium/login.html')
+
+
+@login_required
+def post_publish(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.publish()
+    return HttpResponseRedirect(reverse('medium:post', kwargs={'pk': pk}))
 
 
 @login_required
