@@ -1,16 +1,18 @@
 {% extends 'medium/base.html' %} {% block content %}
 
-<h1>{{post.title}}</h1>
+<h1>{{post.title}} {% if user.is_authenticated and post.author == user %}
+    <!-- -->
+    <span class="post-edit-publish-links">
+        <a href="{% url 'medium:post_edit' pk=post.pk %}">Edit</a>
+        {% if not post.published_date %} |
+        <a href="{% url 'medium:post_publish' pk=post.pk %}">Publish</a>
+
+    </span>{% endif %} {% endif %}</h1>
+
 <p>by {{post.author}} {% if post.published_date %} on {{post.published_date|date}} {% endif %}
 </p>
 <!-- -->
-{% if user.is_authenticated %}
-<!-- -->
-{% if post.author == user %}
-<a href="{% url 'medium:post_edit' pk=post.pk %}">Edit</a>
-{% if not post.published_date %}
-<a href="{% url 'medium:post_publish' pk=post.pk %}">Publish</a>
-{% endif %} {% endif %} {% endif %}
+
 <div class="blog-body">
     {{post.content|safe}}
 </div>

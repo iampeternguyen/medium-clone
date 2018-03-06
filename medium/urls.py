@@ -12,7 +12,5 @@ urlpatterns = [
     path('search/', views.search_posts, name='search'),
     path('post/<int:pk>/edit/', views.PostEditView.as_view(), name='post_edit'),
     path('post/<int:pk>/publish/', views.post_publish, name='post_publish'),
-
-
-
+    path('me/edit/', views.profile_edit, name='profile_edit'),
 ]

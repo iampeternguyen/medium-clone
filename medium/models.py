@@ -9,9 +9,14 @@ from django.urls import reverse
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE,)
+                                on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='avatars', blank=True)
+
+
+class ImageUpload(models.Model):
+    str_from_post = models.TextField()
+    image = models.ImageField(upload_to='posts', blank=True)
 
 
 class Post(models.Model):

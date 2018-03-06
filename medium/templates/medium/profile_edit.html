@@ -1,0 +1,12 @@
+{% extends 'medium/base.html' %} {% block content %}
+<h1>Update Profile</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %} {% load crispy_forms_tags %}
+    <div class="form-group">
+        {{user_form|crispy}} {{user_profile_form|crispy}}
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+{% endblock %}

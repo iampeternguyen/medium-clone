@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
-from medium.models import UserProfile, Post
+from medium.models import UserProfile, Post, ImageUpload
 from crispy_forms.helper import FormHelper
+from mediumeditor.widgets import MediumEditorTextarea
 
 
 class UserForm(forms.ModelForm):
@@ -25,11 +26,27 @@ class UserForm(forms.ModelForm):
     helper = FormHelper()
 
 
+class UserEditForm(forms.ModelForm):
+
+    class Meta():
+        model = User
+        fields = (
+            'email', 'first_name', 'last_name')
+
+    helper = FormHelper()
+
+
 class UserProfileForm(forms.ModelForm):
     class Meta():
         model = UserProfile
         exclude = ('user',)
     helper = FormHelper()
+
+
+class ImageUploadForm(forms.ModelForm):
+    class Meta():
+        model = ImageUpload
+        fields = ('image', 'str_from_post')
 
 
 class PostForm(forms.ModelForm):
@@ -39,5 +56,5 @@ class PostForm(forms.ModelForm):
 
         widgets = {
             'title': forms.Textarea(attrs={'class': 'post-title-input', 'placeholder': 'Title'}),
-            'content': forms.Textarea(attrs={'class': 'editable medium-editor-textarea post-content-input', 'placeholder': 'Body'}),
+            'content': MediumEditorTextarea(),
         }

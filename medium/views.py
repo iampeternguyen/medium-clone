@@ -7,9 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.utils import timezone
+import re
 
-from medium.forms import UserForm, UserProfileForm, PostForm
-from medium.models import Post
+from medium.forms import UserForm, UserProfileForm, PostForm, UserEditForm, ImageUploadForm
+from medium.models import Post, UserProfile, ImageUpload
 # Create your views here.
 
 
@@ -30,7 +31,17 @@ class NewPostView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        # if '<img src=' in form.instance.content:
+        #     self.add_images(form)
         return super().form_valid(form)
+
+    # def add_images(self, form):
+    #     match = re.search(r'img src=\"([^\"]*)', form.instance.content)
+    #     img_form = ImageUploadForm()
+    #     img_form.image = match.group(0)
+    #     img_form.str_from_post = match.group(0)
+    #     img_form.save()
+    #     print(match.group(0))
 
 
 class PostDetailView(generic.DetailView):
@@ -81,8 +92,9 @@ def register_user(request):
 def search_posts(request):
     if request.method == 'POST':
         search = request.POST.get('search')
-        posts_list = Post.objects.filter(
-            Q(title__contains=search) | Q(content__contains=search))
+        posts_list = Post.objects.filter(Q(published_date__lte=timezone.now()),
+                                         Q(title__contains=search) | Q(content__contains=search)).order_by('-published_date')
+
         return render(request, 'medium/index.html', {'posts_list': posts_list})
     else:
         return HttpResponseRedirect(reverse('medium:index'))
@@ -115,3 +127,32 @@ def post_publish(request, pk):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('medium:index'))
+
+
+@login_required
+def profile_edit(request):
+
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST, instance=request.user)
+        user_profile_form = UserProfileForm(
+            data=request.POST, instance=request.user.profile)
+
+        if user_form.is_valid() and user_profile_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+
+            user_profile = user_profile_form.save(commit=False)
+            user_profile.user = user
+
+            if 'avatar' in request.FILES:
+                user_profile.avatar = request.FILES['avatar']
+
+            user_profile.save()
+
+    user_form = UserEditForm(instance=request.user)
+    user_profile_form = UserProfileForm(instance=request.user.profile)
+    return render(request, 'medium/profile_edit.html', {
+        'user_profile_form': user_profile_form,
+        'user_form': user_form,
+    })
