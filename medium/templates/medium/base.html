@@ -36,6 +36,11 @@
             </ul>
             <ul class="navbar-left">
                 <!-- <button class="btn-nav btn-register">Upgrade</button> -->
+                <form action="{% url 'medium:search' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="search" id="search">
+                    <button type="submit">Search</button>
+                </form>
             </ul>
 
 

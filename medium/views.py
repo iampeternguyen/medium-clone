@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 from medium.forms import UserForm, UserProfileForm, PostForm
 from medium.models import Post
@@ -68,6 +69,16 @@ def register_user(request):
         'user_profile_form': user_profile_form,
         'registered': registered
     })
+
+
+def search_posts(request):
+    if request.method == 'POST':
+        search = request.POST.get('search')
+        posts_list = Post.objects.filter(
+            Q(title__contains=search) | Q(content__contains=search))
+        return render(request, 'medium/index.html', {'posts_list': posts_list})
+    else:
+        return HttpResponseRedirect(reverse('medium:index'))
 
 
 def user_login(request):

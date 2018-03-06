@@ -58,3 +58,7 @@
     text-decoration: none;
     color: #0c7a5c;
 }
+
+.date {
+    font-style: italic
+}

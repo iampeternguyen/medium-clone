@@ -4,10 +4,13 @@
     {% for post in posts_list %}
     <div class="post">
         <h1>
-            <a href="{% url 'medium:post' pk=post.pk %}">{{post.title}}</a>
+            <a href="{% url 'medium:post' pk=post.pk %}">{{post.title|striptags}}</a>
         </h1>
         <div class="date">
-            <p>Published on: {{post.created_date|date:"D M Y"}}</p>
+            <p>{{post.created_date|date}}</p>
+        </div>
+        <div class="snippet">
+            <p>{{post.content|truncatechars:300|striptags}}</p>
         </div>
         <!--
         <a href="{% url 'medium:post' pk=post.pk %}">Comments: {{post.approve_comments.count}}</a>
