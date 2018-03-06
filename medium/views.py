@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.utils import timezone
 
 from medium.forms import UserForm, UserProfileForm, PostForm
 from medium.models import Post
@@ -17,26 +18,32 @@ class IndexView(generic.ListView):
     context_object_name = 'posts_list'
 
     def get_queryset(self):
-        return Post.objects.all()
+        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
 
 class NewPostView(LoginRequiredMixin, generic.CreateView):
     login_url = '/login/'
-    redirect_field_name = 'medium/index.html'
+    redirect_field_name = 'medium/post.html'
     template_name = 'medium/new_post.html'
     form_class = PostForm
     model = Post
 
     def form_valid(self, form):
-        obj = form.save(commit=False)
-        obj.author = self.request.user
-        obj.save()
-        return HttpResponseRedirect(Post.get_absolute_url(self))
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
 class PostDetailView(generic.DetailView):
     model = Post
     template_name = 'medium/post.html'
+
+
+class PostEditView(LoginRequiredMixin, generic.UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'medium/post.html'
+    template_name = 'medium/new_post.html'
+    form_class = PostForm
+    model = Post
 
 
 def register_user(request):

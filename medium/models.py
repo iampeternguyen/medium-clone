@@ -27,4 +27,4 @@ class Post(models.Model):
         self.save()
 
     def get_absolute_url(self):
-        return reverse('medium:index')
+        return reverse('medium:post', kwargs={'pk': self.pk})

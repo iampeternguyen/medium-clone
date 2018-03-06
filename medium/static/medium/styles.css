@@ -1,3 +1,13 @@
+a {
+    text-decoration: none;
+    color: #03a87c;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #0c7a5c;
+}
+
 .post-title-input {
     border: none;
     resize: none;
@@ -60,5 +70,9 @@
 }
 
 .date {
-    font-style: italic
+    color: grey
+}
+
+.welcome {
+    margin-right: 2em;
 }
