@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
@@ -102,6 +102,13 @@ def user_login(request):
             return HttpResponse('invalid login details')
     else:
         return render(request, 'medium/login.html')
+
+
+@login_required
+def post_publish(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.publish()
+    return HttpResponseRedirect(reverse('medium:post', kwargs={'pk': pk}))
 
 
 @login_required
