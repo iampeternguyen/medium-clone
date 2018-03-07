@@ -76,3 +76,13 @@ a:hover {
 .welcome {
     margin-right: 2em;
 }
+
+#featured {
+    position: relative;
+    max-height: 400px;
+    width: 100%;
+}
+
+#id_featured_image {
+    color: transparent;
+}

@@ -23,6 +23,7 @@
     {% block head %} {% endblock %}
 
     <link rel="stylesheet" href="{% static 'medium/styles.css' %}">
+
 </head>
 
 <body>
@@ -66,10 +67,12 @@
         </div>
 
     </nav>
+    {% block featured %} {% endblock %}
     <div class="container">
         {% block content %} {% endblock %}
 
     </div>
+    <script src="{% static 'medium/scripts.js' %}"></script>
 </body>
 
 </html>

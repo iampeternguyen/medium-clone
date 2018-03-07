@@ -15,9 +15,9 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to='avatars', blank=True)
 
 
-class ImageUpload(models.Model):
-    str_from_post = models.TextField()
-    image = models.ImageField(upload_to='posts', blank=True)
+class FeaturedImage(models.Model):
+    image = models.ImageField(
+        upload_to='posts', blank=True)
 
 
 class Post(models.Model):
@@ -25,6 +25,8 @@ class Post(models.Model):
                                on_delete=models.CASCADE,)
     title = models.CharField(max_length=200)
     content = FroalaField()
+    featured_image = models.ImageField(
+        upload_to='posts', blank=True)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
 

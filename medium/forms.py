@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from medium.models import UserProfile, Post, ImageUpload
+from medium.models import UserProfile, Post
 from crispy_forms.helper import FormHelper
 from mediumeditor.widgets import MediumEditorTextarea
 from froala_editor.widgets import FroalaEditor
@@ -44,18 +44,18 @@ class UserProfileForm(forms.ModelForm):
     helper = FormHelper()
 
 
-class ImageUploadForm(forms.ModelForm):
-    class Meta():
-        model = ImageUpload
-        fields = ('image', 'str_from_post')
-
-
 class PostForm(forms.ModelForm):
     class Meta():
         model = Post
-        fields = ('title', 'content')
+        fields = ('title', 'content', 'featured_image')
 
         widgets = {
             'title': forms.Textarea(attrs={'class': 'post-title-input', 'placeholder': 'Title'}),
             'content': FroalaEditor(),
         }
+
+
+class PostFeaturedImageForm(forms.ModelForm):
+    class Meta():
+        model = Post
+        fields = ('featured_image',)

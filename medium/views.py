@@ -9,8 +9,8 @@ from django.db.models import Q
 from django.utils import timezone
 import re
 
-from medium.forms import UserForm, UserProfileForm, PostForm, UserEditForm, ImageUploadForm
-from medium.models import Post, UserProfile, ImageUpload
+from medium.forms import UserForm, UserProfileForm, PostForm, UserEditForm, PostFeaturedImageForm
+from medium.models import Post, UserProfile
 # Create your views here.
 
 
@@ -31,17 +31,7 @@ class NewPostView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        # if '<img src=' in form.instance.content:
-        #     self.add_images(form)
         return super().form_valid(form)
-
-    # def add_images(self, form):
-    #     match = re.search(r'img src=\"([^\"]*)', form.instance.content)
-    #     img_form = ImageUploadForm()
-    #     img_form.image = match.group(0)
-    #     img_form.str_from_post = match.group(0)
-    #     img_form.save()
-    #     print(match.group(0))
 
 
 class PostDetailView(generic.DetailView):
@@ -86,6 +76,32 @@ def register_user(request):
         'user_form': user_form,
         'user_profile_form': user_profile_form,
         'registered': registered
+    })
+
+
+def new_post(request):
+
+    if request.method == 'POST':
+        post_form = PostForm(data=request.POST)
+        post_featured_image_form = PostFeaturedImageForm(data=request.POST)
+        if post_form.is_valid() and post_featured_image_form.is_valid():
+            post = post_form.save(commit=False)
+            post.author = request.user
+            post.save()
+
+            if 'featured_image' in request.FILES:
+
+                post.avatar = request.FILES['featured_image']
+                post.save()
+
+    else:
+        post_form = PostForm()
+        post_featured_image_form = PostFeaturedImageForm()
+
+    return render(request, 'medium/new_post.html', {
+        'form': post_form,
+        'featured_form': post_featured_image_form,
+
     })
 
 

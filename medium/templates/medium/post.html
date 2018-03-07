@@ -1,5 +1,5 @@
-{% extends 'medium/base.html' %} {% block content %}
-
+{% extends 'medium/base.html' %} {% block content %} {% if post.featured_image.url %}
+<img id="featured" src="{{post.featured_image.url}}" alt="your image" />{% else %} {% endif %}
 <h1>{{post.title}} {% if user.is_authenticated and post.author == user %}
     <!-- -->
     <span class="post-edit-publish-links">
