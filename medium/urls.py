@@ -13,6 +13,12 @@ urlpatterns = [
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post'),
     path('search/', views.search_posts, name='search'),
     path('post/<int:pk>/edit/', views.PostEditView.as_view(), name='post_edit'),
+    path('post/<int:pk>/comment/', views.add_comment, name='add_comment'),
+    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post_delete'),
+
+    path('post/<int:pk>/comment/delete',
+         views.delete_comment, name='delete_comment'),
     path('post/<int:pk>/publish/', views.post_publish, name='post_publish'),
+
     path('me/edit/', views.profile_edit, name='profile_edit'),
 ]

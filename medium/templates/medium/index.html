@@ -1,8 +1,11 @@
 {% extends 'medium/base.html' %} {% block content %}
-<h1>Index</h1>
 <div class="center-stage">
     {% for post in posts_list %}
     <div class="post">
+        {% if post.featured_image %}
+        <a href="{% url 'medium:post' pk=post.pk %}">
+            <img class="featured-on-index" src="{{post.featured_image.url}}" alt="" />
+        </a>{% endif %}
         <h1>
             <a href="{% url 'medium:post' pk=post.pk %}">{{post.title|striptags}}</a>
         </h1>

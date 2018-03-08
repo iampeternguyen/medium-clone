@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from medium.models import UserProfile, Post
+from medium.models import UserProfile, Post, Comment
 from crispy_forms.helper import FormHelper
 from mediumeditor.widgets import MediumEditorTextarea
 from froala_editor.widgets import FroalaEditor
@@ -47,7 +47,7 @@ class UserProfileForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta():
         model = Post
-        fields = ('title', 'content', 'featured_image')
+        fields = ('title', 'topics_raw', 'content', 'featured_image')
 
         widgets = {
             'title': forms.Textarea(attrs={'class': 'post-title-input', 'placeholder': 'Title'}),
@@ -59,3 +59,15 @@ class PostFeaturedImageForm(forms.ModelForm):
     class Meta():
         model = Post
         fields = ('featured_image',)
+
+
+class CommentForm(forms.ModelForm):
+    class Meta():
+        model = Comment
+        fields = ('content',)
+
+    helper = FormHelper()
+
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        self.fields['content'].label = "Write a response"

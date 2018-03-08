@@ -1,16 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.utils import timezone
+
 import re
 
-from medium.forms import UserForm, UserProfileForm, PostForm, UserEditForm, PostFeaturedImageForm
-from medium.models import Post, UserProfile
+from medium.forms import (UserForm, UserProfileForm, PostForm,
+                          UserEditForm, PostFeaturedImageForm, CommentForm)
+from medium.models import Post, UserProfile, Comment, Topic
 # Create your views here.
 
 
@@ -31,12 +33,27 @@ class NewPostView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        if form.instance.topics_raw:
+            print(form.instance.topics_raw)
+            topics = form.instance.topics_raw.split(',')
+            print(topics)
         return super().form_valid(form)
+
+
+class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
+    login_url = '/login/'
+    model = Post
+    success_url = reverse_lazy('medium:index')
 
 
 class PostDetailView(generic.DetailView):
     model = Post
     template_name = 'medium/post.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
 
 
 class PostEditView(LoginRequiredMixin, generic.UpdateView):
@@ -45,6 +62,45 @@ class PostEditView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'medium/new_post.html'
     form_class = PostForm
     model = Post
+
+    def form_valid(self, form):
+        if form.instance.topics_raw:
+            print(form.instance.topics_raw)
+            topics = form.instance.topics_raw.split(',')
+            post = Post.objects.get(pk=form.instance.id)
+            for topic in topics:
+                # check if topic exists
+                topic = topic.strip()
+                new_topic = Topic.objects.filter(tags=topic)
+
+                if new_topic:
+                    print('already have this topic')
+                else:
+                    print('adding topic')
+                    new_topic = Topic(tags=topic)
+
+                # TODO make unique key for adding tags
+                
+                # else:
+                #     new_topic = Topic(tags=topic)
+
+                #     new_topic.save()
+                # if topic in post.topics.all():
+                #     print('already here')
+                # form.instance.save()
+                # form.instance.topics.add(new_topic)
+        return super().form_valid(form)
+
+
+def add_comment(request, pk):
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.post = Post.objects.get(pk=pk)
+            comment.author = request.user
+            comment.save()
+    return HttpResponseRedirect(reverse('medium:post', kwargs={'pk': pk}))
 
 
 def register_user(request):
@@ -172,3 +228,11 @@ def profile_edit(request):
         'user_profile_form': user_profile_form,
         'user_form': user_form,
     })
+
+
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    post_pk = comment.post.pk
+    comment.delete()
+    return redirect('medium:post', pk=post_pk)

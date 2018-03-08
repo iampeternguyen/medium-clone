@@ -86,3 +86,28 @@ a:hover {
 #id_featured_image {
     color: transparent;
 }
+
+a>img:hover {
+    opacity: .7;
+}
+
+.comment-container {
+    width: 50%;
+    padding: 1em;
+}
+
+.comment-form-container {
+    width: 50%;
+}
+
+#id_content {
+    height: 3em;
+}
+
+.comment-form .asteriskField {
+    display: none;
+}
+
+.comment-delete {
+    float: right;
+}

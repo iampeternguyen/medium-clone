@@ -1,9 +1,11 @@
-{% extends 'medium/base.html' %} {% block content %} {% if post.featured_image.url %}
+{% extends 'medium/base.html' %} {% block content %} {% if post.featured_image %}
 <img id="featured" src="{{post.featured_image.url}}" alt="your image" />{% else %} {% endif %}
 <h1>{{post.title}} {% if user.is_authenticated and post.author == user %}
     <!-- -->
     <span class="post-edit-publish-links">
-        <a href="{% url 'medium:post_edit' pk=post.pk %}">Edit</a>
+        <a href="{% url 'medium:post_edit' pk=post.pk %}">Edit</a> |
+        <a href="{% url 'medium:post_delete' pk=post.pk %}">Delete</a>
+
         {% if not post.published_date %} |
         <a href="{% url 'medium:post_publish' pk=post.pk %}">Publish</a>
 
@@ -16,4 +18,37 @@
 <div class="blog-body">
     {{post.content|safe}}
 </div>
-{% endblock %}
+<h2>Responses</h2> {% for comment in post.comments.all reversed %}
+
+<div class="panel panel-default comment-container">
+    <div class="panel panel-head">
+        <span class="comment-author">
+            {{comment.author}}
+        </span>
+        <span class="comment-date"> {{comment.created_date|timesince}} ago</span>
+        <span class="comment-delete">
+            <a href="{% url 'medium:delete_comment' pk=comment.pk%}">
+                <span class="glyphicon glyphicon-trash"></span>
+            </a>
+        </span>
+
+    </div>
+    <div class="panel-body comment-content">
+        {{comment.content}}
+    </div>
+
+</div>
+{% empty %}
+<p>Be the first to comment!</p>
+{% endfor %} {% if user.is_authenticated %}
+<div class="comment-form-container">
+    <form method="post" action="{% url 'medium:add_comment' pk=post.pk%}" class="comment-form">
+        {% csrf_token %}{% load crispy_forms_tags %} {{comment_form|crispy}}
+        <button type="submit" class="btn btn-primary">Add Response</button>
+    </form>
+    {% else %} To comment, you must be a registered user.
+    <a href="{% url 'medium:login' %}">Sign in</a> now or
+    <a href="{% url 'medium:register' %}">
+        create an account</a> to get started.
+</div>
+<br> {% endif %} {% endblock %}
