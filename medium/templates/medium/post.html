@@ -15,6 +15,11 @@
 </p>
 <!-- -->
 
+<div class="blog-tags">
+    {% for tags in post.tags.all %}
+    <a href="{% url 'medium:tags' pk=tags %}">{{tags}}</a>
+    {% empty %} {%endfor%}
+</div>
 <div class="blog-body">
     {{post.content|safe}}
 </div>

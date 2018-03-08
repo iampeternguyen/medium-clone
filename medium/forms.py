@@ -47,7 +47,7 @@ class UserProfileForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta():
         model = Post
-        fields = ('title', 'topics_raw', 'content', 'featured_image')
+        fields = ('title', 'tags', 'content', 'featured_image')
 
         widgets = {
             'title': forms.Textarea(attrs={'class': 'post-title-input', 'placeholder': 'Title'}),

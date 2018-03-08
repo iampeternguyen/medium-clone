@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
+from taggit.managers import TaggableManager
 from froala_editor.fields import FroalaField
 
 # Create your models here.
@@ -35,8 +36,7 @@ class Post(models.Model):
         upload_to='posts', blank=True)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
-    topics = models.ManyToManyField(Topic)
-    topics_raw = models.CharField(max_length=200, blank=True)
+    tags = TaggableManager()
 
     def __str__(self):
         return self.title

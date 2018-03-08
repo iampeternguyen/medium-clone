@@ -24,6 +24,14 @@ class IndexView(generic.ListView):
         return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
 
+class TagsListView(generic.ListView):
+    template_name = 'medium/index.html'
+    context_object_name = 'posts_list'
+
+    def get_queryset(self):
+        return Post.objects.filter(tags__name__in=[self.kwargs['pk']])
+
+
 class NewPostView(LoginRequiredMixin, generic.CreateView):
     login_url = '/login/'
     redirect_field_name = 'medium/post.html'
@@ -33,10 +41,6 @@ class NewPostView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        if form.instance.topics_raw:
-            print(form.instance.topics_raw)
-            topics = form.instance.topics_raw.split(',')
-            print(topics)
         return super().form_valid(form)
 
 
@@ -62,34 +66,6 @@ class PostEditView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'medium/new_post.html'
     form_class = PostForm
     model = Post
-
-    def form_valid(self, form):
-        if form.instance.topics_raw:
-            print(form.instance.topics_raw)
-            topics = form.instance.topics_raw.split(',')
-            post = Post.objects.get(pk=form.instance.id)
-            for topic in topics:
-                # check if topic exists
-                topic = topic.strip()
-                new_topic = Topic.objects.filter(tags=topic)
-
-                if new_topic:
-                    print('already have this topic')
-                else:
-                    print('adding topic')
-                    new_topic = Topic(tags=topic)
-
-                # TODO make unique key for adding tags
-                
-                # else:
-                #     new_topic = Topic(tags=topic)
-
-                #     new_topic.save()
-                # if topic in post.topics.all():
-                #     print('already here')
-                # form.instance.save()
-                # form.instance.topics.add(new_topic)
-        return super().form_valid(form)
 
 
 def add_comment(request, pk):
