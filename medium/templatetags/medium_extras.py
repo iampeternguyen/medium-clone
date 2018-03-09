@@ -11,7 +11,9 @@ def already_followed_user(author_pk, user):
 
 @register.filter
 def already_followed_topic(tag, user):
-    for topic in user.profile.followed_topics_as_list():
-        if tag == topic:
+    for followed in user.profile.followed_topics.all():
+        print(tag)
+        print(followed)
+        if str(tag) == str(followed):
             return True
     return False

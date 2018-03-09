@@ -29,7 +29,7 @@ class IndexView(generic.ListView):
         # Add in a Queryset
 
         if self.request.user.is_authenticated and self.request.user.profile:
-            followed_topics = self.request.user.profile.followed_topics_as_list()
+            followed_topics = self.request.user.profile.followed_topics.all()
             followed_users = self.request.user.profile.following.all()
             q_objects = Q()
             for topic in followed_topics:
@@ -51,13 +51,13 @@ class TagsListView(generic.ListView):
     context_object_name = 'posts_list'
 
     def get_queryset(self):
-        return Post.objects.filter(tags__name__in=[self.kwargs['pk']])
+        return Post.objects.filter(tags__name__in=[self.kwargs['tag']])
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet
-        context['tag'] = self.kwargs['pk']
+        context['tag'] = self.kwargs['tag']
         return context
 
 
@@ -257,8 +257,29 @@ def follow_user(request, author_pk, post_pk):
 
 
 @login_required
-def follow_topic(request, pk):
+def unfollow_user(request, author_pk, post_pk):
     user = UserProfile.objects.get(user=request.user)
-    user.followed_topics += str(pk) + ','
+    print(user)
+    # user.followed_users += str(author) + ','
+    follow = UserProfile.objects.get(user=author_pk)
+    print(follow)
+    user.following.remove(follow)
     user.save()
-    return redirect('medium:tags', pk=pk)
+    return redirect('medium:post', pk=post_pk)
+    # followed_users += user + ', '
+
+
+@login_required
+def follow_topic(request, tag):
+    user = UserProfile.objects.get(user=request.user)
+    user.followed_topics.add(tag)
+    user.save()
+    return redirect('medium:tags', tag=tag)
+
+
+@login_required
+def unfollow_topic(request, tag):
+    user = UserProfile.objects.get(user=request.user)
+    user.followed_topics.remove(tag)
+    user.save()
+    return redirect('medium:tags', tag=tag)
