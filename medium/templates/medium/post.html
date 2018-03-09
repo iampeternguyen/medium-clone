@@ -1,4 +1,4 @@
-{% extends 'medium/base.html' %} {% block content %} {% if post.featured_image %}
+{% extends 'medium/base.html' %}{% load medium_extras %} {% block content %} {% if post.featured_image %}
 <img id="featured" src="{{post.featured_image.url}}" alt="your image" />{% else %} {% endif %}
 <h1>{{post.title}} {% if user.is_authenticated and post.author == user %}
     <!-- -->
@@ -11,7 +11,15 @@
 
     </span>{% endif %} {% endif %}</h1>
 
-<p>by {{post.author}} {% if post.published_date %} on {{post.published_date|date}} {% endif %}
+<p>by {{post.author}}
+    <!-- -->
+    {% if user.is_authenticated %} {% if post.author != user %}
+    <!-- -->{% if post.author.pk|already_followed_user:user %}
+    <!-- -->followed
+    <!-- -->{% else %}
+    <a href="{% url 'medium:follow_user' author_pk=post.author.pk post_pk=post.pk %}">Follow</a>
+    <!-- -->{% endif %} {% endif %} {% else %} Login to follow {%endif%}
+    <br>{% if post.published_date %} on {{post.published_date|date}}{% endif %}
 </p>
 <!-- -->
 

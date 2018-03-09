@@ -9,7 +9,9 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('new/', views.NewPostView.as_view(), name='new'),
     path('new2/', views.new_post, name='new2'),
-
+    path('follow/<author_pk>/<int:post_pk>',
+         views.follow_user, name='follow_user'),
+    path('follow/topic/<pk>', views.follow_topic, name='follow_topic'),
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post'),
     path('search/', views.search_posts, name='search'),
     path('post/<int:pk>/edit/', views.PostEditView.as_view(), name='post_edit'),

@@ -1,9 +1,11 @@
-{% extends 'medium/base.html' %} {% block content %}
-<!-- -->
-{% if followed_posts %} {% for post in followed_posts %} {{post.title}} {{post.pk}}
-
-<!-- -->
-{% endfor %} {% endif %}
+{% extends 'medium/base.html' %}{% load medium_extras %} {% block content %}
+<h1>{{tag}}</h1>
+{% if user.is_authenticated %}
+<!-- -->{% if tag|already_followed_topic:user %}
+<!-- -->followed
+<!-- -->{% else %}
+<a href="{% url 'medium:follow_topic' pk=tag %}">Follow</a>
+<!-- -->{% endif %} {% else %} Login to follow {%endif%}
 <div class="center-stage">
     {% for post in posts_list %}
     <div class="post">

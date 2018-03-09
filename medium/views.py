@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.utils import timezone
-
+from itertools import chain
 import re
 
 from medium.forms import (UserForm, UserProfileForm, PostForm,
@@ -21,15 +21,44 @@ class IndexView(generic.ListView):
     context_object_name = 'posts_list'
 
     def get_queryset(self):
-        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:10]
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a Queryset
+
+        if self.request.user.is_authenticated and self.request.user.profile:
+            followed_topics = self.request.user.profile.followed_topics_as_list()
+            followed_users = self.request.user.profile.following.all()
+            q_objects = Q()
+            for topic in followed_topics:
+                q_objects.add(Q(tags__name=topic), Q.OR)
+
+            for user in followed_users:
+                q_objects.add(Q(author=user.user), Q.OR)
+
+            context['followed_posts'] = Post.objects.filter(
+                q_objects).distinct().order_by(('-published_date'))
+
+        return context
+
+# TODO FIX THIS VIEW
 
 
 class TagsListView(generic.ListView):
-    template_name = 'medium/index.html'
+    template_name = 'medium/topic_list.html'
     context_object_name = 'posts_list'
 
     def get_queryset(self):
         return Post.objects.filter(tags__name__in=[self.kwargs['pk']])
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet
+        context['tag'] = self.kwargs['pk']
+        return context
 
 
 class NewPostView(LoginRequiredMixin, generic.CreateView):
@@ -141,7 +170,7 @@ def search_posts(request):
     if request.method == 'POST':
         search = request.POST.get('search')
         posts_list = Post.objects.filter(Q(published_date__lte=timezone.now()),
-                                         Q(title__contains=search) | Q(content__contains=search)).order_by('-published_date')
+                                         Q(title__contains=search) | Q(content__contains=search)).order_by('-published_date')[:10]
 
         return render(request, 'medium/index.html', {'posts_list': posts_list})
     else:
@@ -212,3 +241,24 @@ def delete_comment(request, pk):
     post_pk = comment.post.pk
     comment.delete()
     return redirect('medium:post', pk=post_pk)
+
+
+@login_required
+def follow_user(request, author_pk, post_pk):
+    user = UserProfile.objects.get(user=request.user)
+    print(user)
+    # user.followed_users += str(author) + ','
+    follow = UserProfile.objects.get(user=author_pk)
+    print(follow)
+    user.following.add(follow)
+    user.save()
+    return redirect('medium:post', pk=post_pk)
+    # followed_users += user + ', '
+
+
+@login_required
+def follow_topic(request, pk):
+    user = UserProfile.objects.get(user=request.user)
+    user.followed_topics += str(pk) + ','
+    user.save()
+    return redirect('medium:tags', pk=pk)

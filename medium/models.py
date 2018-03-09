@@ -14,6 +14,18 @@ class UserProfile(models.Model):
                                 on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='avatars', blank=True)
+    followed_topics = models.TextField(blank=True)
+    following = models.ManyToManyField(
+        'self', related_name='follows', symmetrical=False)
+
+    def followed_topics_as_list(self):
+        return self.followed_topics.split(',')
+
+    def followed_users_as_list(self):
+        return self.followed_users.split(',')
+
+    def __str__(self):
+        return str(self.user)
 
 
 class FeaturedImage(models.Model):
@@ -36,7 +48,10 @@ class Post(models.Model):
         upload_to='posts', blank=True)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
+
+    def author_string(self):
+        return str(self.author)
 
     def __str__(self):
         return self.title

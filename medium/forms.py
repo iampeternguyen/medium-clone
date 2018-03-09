@@ -40,7 +40,7 @@ class UserEditForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta():
         model = UserProfile
-        exclude = ('user',)
+        fields = ('bio', 'avatar')
     helper = FormHelper()
 
 
