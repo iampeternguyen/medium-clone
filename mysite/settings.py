@@ -25,7 +25,7 @@ SECRET_KEY = '($k7e)*5!ftm3$uq@sz4@l*ogkys#j-acd)96b-kp!u%0f8a+$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['medium-clone-iampeternguyen.herokuapp.com']
 
 
 # Application definition
