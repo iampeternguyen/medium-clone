@@ -7,43 +7,33 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.utils import timezone
+from django.core.paginator import Paginator
 from itertools import chain
 import re
 
 from medium.forms import (UserForm, UserProfileForm, PostForm,
                           UserEditForm, PostFeaturedImageForm, CommentForm)
-from medium.models import Post, UserProfile, Comment, Topic
+from medium.models import Post, UserProfile, Comment, Topic, User
 # Create your views here.
 
 
 class IndexView(generic.ListView):
     template_name = 'medium/index.html'
     context_object_name = 'posts_list'
+    paginate_by = 10
 
     def get_queryset(self):
-        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:10]
+        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a Queryset
 
-        if self.request.user.is_authenticated and self.request.user.profile:
-            followed_topics = self.request.user.profile.followed_topics.all()
-            followed_users = self.request.user.profile.following.all()
-            q_objects = Q()
-            for topic in followed_topics:
-                q_objects.add(Q(tags__name=topic), Q.OR)
-
-            for user in followed_users:
-                q_objects.add(Q(author=user.user), Q.OR)
-
-            context['followed_posts'] = Post.objects.filter(
-                q_objects).distinct().order_by(('-published_date'))
-
+        context['followed_posts'] = self.request.user.profile.followed_posts()[
+            :10]
+        print(context['followed_posts'])
         return context
-
-# TODO FIX THIS VIEW
 
 
 class TagsListView(generic.ListView):
@@ -59,6 +49,14 @@ class TagsListView(generic.ListView):
         # Add in a QuerySet
         context['tag'] = self.kwargs['tag']
         return context
+
+
+class DraftsListView(generic.ListView):
+    template_name = 'medium/drafts.html'
+    context_object_name = 'posts_list'
+
+    def get_queryset(self):
+        return Post.objects.filter(published_date=None, author=self.request.user)
 
 
 class NewPostView(LoginRequiredMixin, generic.CreateView):
@@ -89,6 +87,12 @@ class PostDetailView(generic.DetailView):
         return context
 
 
+class ProfileDetailView(generic.DetailView):
+    model = User
+    context_object_name = 'medium_user'
+    template_name = 'medium/profile.html'
+
+
 class PostEditView(LoginRequiredMixin, generic.UpdateView):
     login_url = '/login/'
     redirect_field_name = 'medium/post.html'
@@ -106,6 +110,10 @@ def add_comment(request, pk):
             comment.author = request.user
             comment.save()
     return HttpResponseRedirect(reverse('medium:post', kwargs={'pk': pk}))
+
+
+def my_profile(request):
+    return render(request, 'medium/me.html', {'medium_user': request.user})
 
 
 def register_user(request):
@@ -210,29 +218,24 @@ def user_logout(request):
 def profile_edit(request):
 
     if request.method == 'POST':
-        user_form = UserForm(data=request.POST, instance=request.user)
+        user_form = UserEditForm(data=request.POST, instance=request.user)
         user_profile_form = UserProfileForm(
             data=request.POST, instance=request.user.profile)
+        user_form.save()
+        user_profile = user_profile_form.save()
 
-        if user_form.is_valid() and user_profile_form.is_valid():
-            user = user_form.save()
-            user.set_password(user.password)
-            user.save()
+        if 'avatar' in request.FILES:
+            user_profile.avatar = request.FILES['avatar']
+        user_profile.save()
 
-            user_profile = user_profile_form.save(commit=False)
-            user_profile.user = user
-
-            if 'avatar' in request.FILES:
-                user_profile.avatar = request.FILES['avatar']
-
-            user_profile.save()
-
-    user_form = UserEditForm(instance=request.user)
-    user_profile_form = UserProfileForm(instance=request.user.profile)
-    return render(request, 'medium/profile_edit.html', {
-        'user_profile_form': user_profile_form,
-        'user_form': user_form,
-    })
+        return HttpResponseRedirect(reverse('medium:me_edit'))
+    else:
+        user_form = UserEditForm(instance=request.user)
+        user_profile_form = UserProfileForm(instance=request.user.profile)
+        return render(request, 'medium/profile_edit.html', {
+            'user_profile_form': user_profile_form,
+            'user_form': user_form,
+        })
 
 
 @login_required
@@ -283,3 +286,19 @@ def unfollow_topic(request, tag):
     user.followed_topics.remove(tag)
     user.save()
     return redirect('medium:tags', tag=tag)
+
+
+@login_required
+def add_cheer(request, pk):
+    post = Post.objects.get(pk=pk)
+    post.cheers.add(request.user)
+    post.save()
+    return redirect('medium:post', pk=pk)
+
+
+@login_required
+def remove_cheer(request, pk):
+    post = Post.objects.get(pk=pk)
+    post.cheers.remove(request.user)
+    post.save()
+    return redirect('medium:post', pk=pk)

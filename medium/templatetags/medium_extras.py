@@ -1,5 +1,5 @@
 from django import template
-from medium.models import UserProfile
+from medium.models import UserProfile, Post
 register = template.Library()
 
 
@@ -17,3 +17,9 @@ def already_followed_topic(tag, user):
         if str(tag) == str(followed):
             return True
     return False
+
+
+@register.filter
+def already_cheered(post_pk, user):
+    post = Post.objects.get(pk=post_pk)
+    return user in post.cheers.all()

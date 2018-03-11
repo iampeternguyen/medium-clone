@@ -1,29 +1,32 @@
-{% extends 'medium/base.html' %} {% block content %}
+{% extends 'medium/base_paginated.html' %} {% block title %}
+<h1>Recent Posts</h1> {% endblock %}
 <!-- -->
-{% if followed_posts %} {% for post in followed_posts %} {{post.title}} {{post.pk}}
-
-<!-- -->
-{% endfor %} {% endif %}
-<div class="center-stage">
-    {% for post in posts_list %}
-    <div class="post">
-        {% if post.featured_image %}
-        <a href="{% url 'medium:post' pk=post.pk %}">
-            <img class="featured-on-index" src="{{post.featured_image.url}}" alt="" />
-        </a>{% endif %}
-        <h1>
-            <a href="{% url 'medium:post' pk=post.pk %}">{{post.title|striptags}}</a>
-        </h1>
-        <div class="date">
-            <p>by {{post.author}} on {{post.created_date|date|striptags}}</p>
-        </div>
-        <div class="snippet">
-            <p>{{post.content|striptags|safe|truncatechars:300}}</p>
-        </div>
-        <!--
-        <a href="{% url 'medium:post' pk=post.pk %}">Comments: {{post.approve_comments.count}}</a>
-        -->
+{% block sidebar %} {% if user.is_authenticated %}
+<div class="panel panel-default">
+    <div class="panel panel-head">
+        {% if followed_posts %}
+        <h2>Followed Posts</h2>
     </div>
-    {% endfor %}
+    <div class="panel panel-body">
+        {% for post in followed_posts %}
+        <h4>
+            <a href="{% url 'medium:post' pk=post.pk%}">{{post.title}}</a>
+        </h4>
+        <p class="text-muted">
+            <a href="{% url 'medium:profile' pk=post.author.pk %}">{{post.author}}</a>
+        </p>
+        <p class="text-muted">
+            {% for tag in post.tags.all %}
+            <a href="{% url 'medium:tags' tag=tag %}">{{tag}}</a>
+            {% empty %} {%endfor%}
+        </p>
+        <p>
+            {{post.content|striptags|safe|truncatechars:300}}
+        </p>
+        {% endfor %} {% else %} Start following people or topics! {% endif %}
+
+    </div>
+    {% endif %}
 </div>
+
 {% endblock %}

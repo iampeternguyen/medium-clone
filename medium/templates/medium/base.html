@@ -47,11 +47,14 @@
 
 
             <ul class="navbar-right">
-                <span class="welcome">{% if user.is_authenticated %} Welcome {{user.username}}</span>
-                {% if user.profile.avatar %}
-                <img src="{{user.profile.avatar.url}}" class="nav-profile-img" width="25px" alt=""> {%endif%}
-                <a href="{% url 'medium:new' %}" class="welcome">
+                {% if user.is_authenticated %} {% if user.profile.avatar %}
+                <a href="{% url 'medium:me' %}">
+                    <img src="{{user.profile.avatar.url}}" class="nav-profile-img" width="25px" alt=""> </a>{%endif%}
+                <a href="{% url 'medium:new' %}">&nbsp;
                     <span class="glyphicon glyphicon-plus"></span>
+                </a>&nbsp;
+                <a href="{% url 'medium:drafts' %}" class="welcome">
+                    <span>drafts</span>
                 </a>
                 <a href="{% url 'medium:logout' %}">
                     <button class="btn-nav btn-register">Logout</button>

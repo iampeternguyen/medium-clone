@@ -104,10 +104,18 @@ a>img:hover {
     height: 3em;
 }
 
-.comment-form .asteriskField {
+.comment-form.asteriskField {
     display: none;
 }
 
 .comment-delete {
     float: right;
+}
+
+.panel-head {
+    padding: 0 1em;
+}
+
+.featured-on-index {
+    max-height: 300px;
 }

@@ -1,0 +1,78 @@
+{% extends 'medium/base.html' %} {% block content %}
+<!-- -->
+
+<!-- -->
+
+{% block title %} {% endblock %}
+
+<div class="row">
+    <div class="col-md-8">
+        {% for post in posts_list %}
+        <div class="post">
+            {% if post.featured_image %}
+            <a href="{% url 'medium:post' pk=post.pk %}">
+                <img class="featured-on-index img-responsive" src="{{post.featured_image.url}}" alt="" />
+            </a>{% endif %}
+            <h1>
+                <a href="{% url 'medium:post' pk=post.pk %}">{{post.title|striptags}}</a>
+            </h1>
+            <div class="date">
+                <p>by
+                    <a href="{% url 'medium:profile' pk=post.author.pk %}">{{post.author}}</a> on {{post.created_date|date|striptags}}</p>
+            </div>
+            <div class="tags">
+                <p class="text-muted">
+                    {% for tag in post.tags.all %}
+                    <a href="{% url 'medium:tags' tag=tag %}">{{tag}}</a>
+                    {% empty %} {%endfor%}
+                </p>
+            </div>
+            <div class="snippet">
+                <p>{{post.content|striptags|safe|truncatechars:1000}}</p>
+            </div>
+            <!--
+                    <a href="{% url 'medium:post' pk=post.pk %}">Comments: {{post.approve_comments.count}}</a>
+                    -->
+        </div>
+        {% endfor %}
+
+        <!-- pagination -->
+        <div class="text-center">
+
+            {% if is_paginated %}
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li>
+                    <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <span>&laquo;</span>
+                </li>
+                {% endif %} {% for i in paginator.page_range %} {% if page_obj.number == i %}
+                <li class="active">
+                    <span>{{ i }}
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+
+                {% endif %} {% endfor %} {% if page_obj.has_next %}
+                <li>
+                    <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <span>&raquo;</span>
+                </li>
+                {% endif %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% block sidebar %} {% endblock %}
+
+    </div>
+</div>
+{% endblock %}

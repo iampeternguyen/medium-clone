@@ -1,0 +1,7 @@
+{% extends 'medium/profile.html' %} {% block edit %} {% if user.is_authenticated %}
+</h1>
+<p class="text-center">
+    <a href="{% url 'medium:me_edit' %}">Update Profile</a>
+</p>
+<h1>
+    {% endif %} {% endblock %}

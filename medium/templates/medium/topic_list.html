@@ -1,4 +1,4 @@
-{% extends 'medium/base.html' %}{% load medium_extras %} {% block content %}
+{% extends 'medium/base_paginated.html' %}{% load medium_extras %} {% block title %}
 <h1>{{tag}}</h1>
 {% if user.is_authenticated %}
 <!-- -->{% if tag|already_followed_topic:user %}
@@ -6,27 +6,4 @@
 <a href="{% url 'medium:unfollow_topic' tag=tag %}">Unfollow</a>
 <!-- -->{% else %}
 <a href="{% url 'medium:follow_topic' tag=tag %}">Follow</a>
-<!-- -->{% endif %} {% else %} Login to follow {%endif%}
-<div class="center-stage">
-    {% for post in posts_list %}
-    <div class="post">
-        {% if post.featured_image %}
-        <a href="{% url 'medium:post' pk=post.pk %}">
-            <img class="featured-on-index" src="{{post.featured_image.url}}" alt="" />
-        </a>{% endif %}
-        <h1>
-            <a href="{% url 'medium:post' pk=post.pk %}">{{post.title|striptags}}</a>
-        </h1>
-        <div class="date">
-            <p>by {{post.author}} on {{post.created_date|date|striptags}}</p>
-        </div>
-        <div class="snippet">
-            <p>{{post.content|striptags|safe|truncatechars:300}}</p>
-        </div>
-        <!--
-        <a href="{% url 'medium:post' pk=post.pk %}">Comments: {{post.approve_comments.count}}</a>
-        -->
-    </div>
-    {% endfor %}
-</div>
-{% endblock %}
+<!-- -->{% endif %} {% else %} Login to follow {%endif%} {% endblock %}

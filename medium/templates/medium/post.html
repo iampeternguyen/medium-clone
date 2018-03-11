@@ -11,7 +11,8 @@
 
     </span>{% endif %} {% endif %}</h1>
 
-<p>by {{post.author}}
+<p>by
+    <a href="{% url 'medium:profile' pk=post.author.pk %}">{{post.author}}</a>
     <!-- -->
     {% if user.is_authenticated %} {% if post.author != user %}
     <!-- -->{% if post.author.pk|already_followed_user:user %}
@@ -33,7 +34,19 @@
 <div class="blog-body">
     {{post.content|safe}}
 </div>
-<h2>Responses</h2> {% for comment in post.comments.all reversed %}
+<div class="cheer">
+    <p>
+        {% if post.pk|already_cheered:user %}
+        <a href="{% url 'medium:remove_cheer' pk=post.pk %}">
+            {% else %}
+            <a href="{% url 'medium:add_cheer' pk=post.pk %}"> {% endif %}
+    </p>
+    <span class="glyphicon glyphicon-hand-up larger" style="font-size:3em;"></span>
+    </a>
+    <span style="vertical-align:50%"> {{post.cheers.count}}
+    </span>
+</div>
+<h2>Responses</h2> {% for comment in post.all_comments %}
 
 <div class="panel panel-default comment-container">
     <div class="panel panel-head">

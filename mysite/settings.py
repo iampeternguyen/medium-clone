@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'taggit',
     'froala_editor',
     'crispy_forms',
@@ -127,3 +128,4 @@ MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
