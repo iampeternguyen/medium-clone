@@ -25,7 +25,7 @@ SECRET_KEY = '($k7e)*5!ftm3$uq@sz4@l*ogkys#j-acd)96b-kp!u%0f8a+$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['medium-clone-iampeternguyen.herokuapp.com']
+ALLOWED_HOSTS = ['medium-clone-iampeternguyen.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -123,7 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 

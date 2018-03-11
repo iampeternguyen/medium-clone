@@ -29,10 +29,9 @@ class IndexView(generic.ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a Queryset
-
-        context['followed_posts'] = self.request.user.profile.followed_posts()[
-            :10]
-        print(context['followed_posts'])
+        if self.request.user.is_authenticated:
+            context['followed_posts'] = self.request.user.profile.followed_posts()[
+                :10]
         return context
 
 
