@@ -1,17 +1,82 @@
-{% extends 'medium/base.html' %} {% block content %}
+{% extends 'medium/base.html' %}{% load medium_extras %} {% block content %} {% if post.featured_image %}
+<img id="featured" src="{{post.featured_image.url}}" alt="your image" />{% else %} {% endif %}
+<h1>{{post.title}} {% if user.is_authenticated and post.author == user %}
+    <!-- -->
+    <span class="post-edit-publish-links">
+        <a href="{% url 'medium:post_edit' pk=post.pk %}">Edit</a> |
+        <a href="{% url 'medium:post_delete' pk=post.pk %}">Delete</a>
 
-<h1>{{post.title}}</h1>
-<p>by {{post.author}} {% if post.published_date %} on {{post.published_date|date}} {% endif %}
+        {% if not post.published_date %} |
+        <a href="{% url 'medium:post_publish' pk=post.pk %}">Publish</a>
+
+    </span>{% endif %} {% endif %}</h1>
+
+<p>by
+    <a href="{% url 'medium:profile' pk=post.author.pk %}">{{post.author}}</a>
+    <!-- -->
+    {% if user.is_authenticated %} {% if post.author != user %}
+    <!-- -->{% if post.author.pk|already_followed_user:user %}
+    <!-- <-->
+    <a href="{% url 'medium:unfollow_user' author_pk=post.author.pk post_pk=post.pk %}">Unfollow</a>
+    </-->
+    <!-- -->{% else %}
+    <a href="{% url 'medium:follow_user' author_pk=post.author.pk post_pk=post.pk %}">Follow</a>
+    <!-- -->{% endif %} {% endif %} {% else %} Login to follow {%endif%}
+    <br>{% if post.published_date %} on {{post.published_date|date}}{% endif %}
 </p>
 <!-- -->
-{% if user.is_authenticated %}
-<!-- -->
-{% if post.author == user %}
-<a href="{% url 'medium:post_edit' pk=post.pk %}">Edit</a>
-{% if not post.published_date %}
-<a href="{% url 'medium:post_publish' pk=post.pk %}">Publish</a>
-{% endif %} {% endif %} {% endif %}
+
+<div class="blog-tags">
+    {% for tag in post.tags.all %}
+    <a href="{% url 'medium:tags' tag=tag %}">{{tag}}</a>
+    {% empty %} {%endfor%}
+</div>
 <div class="blog-body">
     {{post.content|safe}}
 </div>
-{% endblock %}
+<div class="cheer">
+    <p>
+        {% if post.pk|already_cheered:user %}
+        <a href="{% url 'medium:remove_cheer' pk=post.pk %}">
+            {% else %}
+            <a href="{% url 'medium:add_cheer' pk=post.pk %}"> {% endif %}
+    </p>
+    <span class="glyphicon glyphicon-hand-up larger" style="font-size:3em;"></span>
+    </a>
+    <span style="vertical-align:50%"> {{post.cheers.count}}
+    </span>
+</div>
+<h2>Responses</h2> {% for comment in post.all_comments %}
+
+<div class="panel panel-default comment-container">
+    <div class="panel panel-head">
+        <span class="comment-author">
+            {{comment.author}}
+        </span>
+        <span class="comment-date"> {{comment.created_date|timesince}} ago</span>
+        <span class="comment-delete">
+            <a href="{% url 'medium:delete_comment' pk=comment.pk%}">
+                <span class="glyphicon glyphicon-trash"></span>
+            </a>
+        </span>
+
+    </div>
+    <div class="panel-body comment-content">
+        {{comment.content}}
+    </div>
+
+</div>
+{% empty %}
+<p>Be the first to comment!</p>
+{% endfor %} {% if user.is_authenticated %}
+<div class="comment-form-container">
+    <form method="post" action="{% url 'medium:add_comment' pk=post.pk%}" class="comment-form">
+        {% csrf_token %}{% load crispy_forms_tags %} {{comment_form|crispy}}
+        <button type="submit" class="btn btn-primary">Add Response</button>
+    </form>
+    {% else %} To comment, you must be a registered user.
+    <a href="{% url 'medium:login' %}">Sign in</a> now or
+    <a href="{% url 'medium:register' %}">
+        create an account</a> to get started.
+</div>
+<br> {% endif %} {% endblock %}

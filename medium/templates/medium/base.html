@@ -17,13 +17,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
         crossorigin="anonymous">
 
-    <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
+    <!--<script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css" type="text/css"
-        media="screen" charset="utf-8">
-
-
+        media="screen" charset="utf-8">-->
+    {% block head %} {% endblock %}
 
     <link rel="stylesheet" href="{% static 'medium/styles.css' %}">
+
 </head>
 
 <body>
@@ -47,9 +47,14 @@
 
 
             <ul class="navbar-right">
-                <span class="welcome">{% if user.is_authenticated %} Welcome {{user.username}}</span>
-                <a href="{% url 'medium:new' %}" class="welcome">
+                {% if user.is_authenticated %} {% if user.profile.avatar %}
+                <a href="{% url 'medium:me' %}">
+                    <img src="{{user.profile.avatar.url}}" class="nav-profile-img" width="25px" alt=""> </a>{%endif%}
+                <a href="{% url 'medium:new' %}">&nbsp;
                     <span class="glyphicon glyphicon-plus"></span>
+                </a>&nbsp;
+                <a href="{% url 'medium:drafts' %}" class="welcome">
+                    <span>drafts</span>
                 </a>
                 <a href="{% url 'medium:logout' %}">
                     <button class="btn-nav btn-register">Logout</button>
@@ -66,10 +71,12 @@
         </div>
 
     </nav>
+    {% block featured %} {% endblock %}
     <div class="container">
         {% block content %} {% endblock %}
 
     </div>
+    <script src="{% static 'medium/scripts.js' %}"></script>
 </body>
 
 </html>
