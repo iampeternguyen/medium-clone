@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
-from medium.models import UserProfile, Post
+from medium.models import UserProfile, Post, Comment
 from crispy_forms.helper import FormHelper
+from mediumeditor.widgets import MediumEditorTextarea
+from froala_editor.widgets import FroalaEditor
 
 
 class UserForm(forms.ModelForm):
@@ -25,19 +27,47 @@ class UserForm(forms.ModelForm):
     helper = FormHelper()
 
 
+class UserEditForm(forms.ModelForm):
+
+    class Meta():
+        model = User
+        fields = (
+            'email', 'first_name', 'last_name')
+
+    helper = FormHelper()
+
+
 class UserProfileForm(forms.ModelForm):
     class Meta():
         model = UserProfile
-        exclude = ('user',)
+        fields = ('bio', 'avatar')
     helper = FormHelper()
 
 
 class PostForm(forms.ModelForm):
     class Meta():
         model = Post
-        fields = ('title', 'content')
+        fields = ('title', 'tags', 'content', 'featured_image')
 
         widgets = {
             'title': forms.Textarea(attrs={'class': 'post-title-input', 'placeholder': 'Title'}),
-            'content': forms.Textarea(attrs={'class': 'editable medium-editor-textarea post-content-input', 'placeholder': 'Body'}),
+            'content': FroalaEditor(),
         }
+
+
+class PostFeaturedImageForm(forms.ModelForm):
+    class Meta():
+        model = Post
+        fields = ('featured_image',)
+
+
+class CommentForm(forms.ModelForm):
+    class Meta():
+        model = Comment
+        fields = ('content',)
+
+    helper = FormHelper()
+
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        self.fields['content'].label = "Write a response"

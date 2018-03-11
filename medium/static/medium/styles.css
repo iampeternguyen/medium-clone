@@ -76,3 +76,46 @@ a:hover {
 .welcome {
     margin-right: 2em;
 }
+
+#featured {
+    position: relative;
+    max-height: 400px;
+    width: 100%;
+}
+
+#id_featured_image {
+    color: transparent;
+}
+
+a>img:hover {
+    opacity: .7;
+}
+
+.comment-container {
+    width: 50%;
+    padding: 1em;
+}
+
+.comment-form-container {
+    width: 50%;
+}
+
+#id_content {
+    height: 3em;
+}
+
+.comment-form.asteriskField {
+    display: none;
+}
+
+.comment-delete {
+    float: right;
+}
+
+.panel-head {
+    padding: 0 1em;
+}
+
+.featured-on-index {
+    max-height: 300px;
+}

@@ -1,0 +1,49 @@
+{% extends 'medium/base.html' %} {% block content %}
+
+<div class="container">
+    <div class="row">
+        <h1 class="text-center">{{medium_user.username|upper}}{% block edit %} {% endblock %}</h1>
+
+        <div class="col-md-3">
+            <img src="{{medium_user.profile.avatar.url}}" alt="" class="thumbnail img-responsive">
+
+        </div>
+        <div class="col-md-9">
+            <p>{{medium_user.profile.bio}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h1 class="text-center">Recent Posts</h1>
+            {% for post in medium_user.profile.recent_posts.all %}
+            <ul>
+                <span class="glyphicon glyphicon-menu-right"></span>
+                <a href="{% url 'medium:post' pk=post.pk %}">{{post.title}}</a>
+            </ul>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <h1 class="text-center">Recent Comments</h1>
+            {% for comment in medium_user.profile.recent_comments.all %}
+            <ul>
+                <span class="glyphicon glyphicon-menu-right"></span>
+                {{comment.content|truncatechars:20}} on
+                <a href="{% url 'medium:post' pk=comment.post.pk %}"> {{comment.post.title}}</a>
+            </ul>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <h1 class="text-center">Recent Cheers</h1>
+            {% for post in medium_user.profile.recent_cheers.all %}
+            <ul>
+                <span class="glyphicon glyphicon-menu-right"></span>
+                <a href="{% url 'medium:post' pk=post.pk %}">{{post.title}}</a>
+            </ul> {% endfor %}
+
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}
