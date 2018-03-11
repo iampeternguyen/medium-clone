@@ -39,10 +39,13 @@ def fake_posts(n):
 
         title = fake.sentence()
         content = ""
-        for j in range(0, 5):
-            for l in range(0, 5):
+
+        for j in range(0, 10):
+            content += '<h3>' + fake.sentence() + '</h3>'
+            content += '&nbsp;' * 4 + fake.sentence()
+            for l in range(0, 30):
                 content += fake.sentence() + ' '
-            content += '\n'
+            content += '<br><br>'
         created_date = fake.past_date(
             start_date="-1y", tzinfo='America/New_York')
         published_date = created_date
