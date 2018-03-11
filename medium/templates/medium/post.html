@@ -54,11 +54,13 @@
             {{comment.author}}
         </span>
         <span class="comment-date"> {{comment.created_date|timesince}} ago</span>
+        {% if user.is_authenticated and comment.author == user or post.author == user %}
         <span class="comment-delete">
             <a href="{% url 'medium:delete_comment' pk=comment.pk%}">
                 <span class="glyphicon glyphicon-trash"></span>
             </a>
         </span>
+        {% endif %}
 
     </div>
     <div class="panel-body comment-content">
