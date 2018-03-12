@@ -129,3 +129,4 @@ MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+LOGIN_URL = '/login/'
