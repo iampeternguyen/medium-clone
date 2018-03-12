@@ -30,8 +30,9 @@ class IndexView(generic.ListView):
         context = super().get_context_data(**kwargs)
         # Add in a Queryset
         if self.request.user.is_authenticated:
-            context['followed_posts'] = self.request.user.profile.followed_posts()[
-                :10]
+            posts = self.request.user.profile.followed_posts()
+            if posts:
+                context['followed_posts'] = posts[:10]
         return context
 
 
@@ -171,6 +172,8 @@ def new_post(request):
         'featured_form': post_featured_image_form,
 
     })
+
+# TODO make this a cbv or base it off of the pagenated view
 
 
 def search_posts(request):

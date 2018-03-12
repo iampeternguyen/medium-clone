@@ -52,7 +52,9 @@ class UserProfile(models.Model):
         if q_objects:
             posts = Post.objects.filter(
                 q_objects).distinct().order_by(('-published_date'))
-        return posts
+            return posts
+        else:
+            return False
 
     def paginated_followed_posts(self):
         return Paginator(self.followed_posts(), 10)
