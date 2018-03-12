@@ -39,19 +39,25 @@ class UserProfile(models.Model):
         return Post.objects.filter(cheers__in=[self.user])[:10]
 
     def followed_posts(self):
-        followed_topics = self.followed_topics.all()
+        topics = self.followed_topics.all()
         followed_users = self.following.all()
+        print(followed_users)
         q_objects = Q()
-        if followed_topics:
-            for topic in followed_topics:
-                print(topic)
-                q_objects.add(Q(tags__name__in=topic), Q.OR)
-        if followed_users:
+        # TODO FIX THIS
+        if topics.count() >= 1:
+            for topic in topics:
+                q_objects.add(Q(tags__name__in=[topic]), Q.OR)
+        print(q_objects)
+
+        if followed_users.count() >= 1:
             for user in followed_users:
                 q_objects.add(Q(author=user.user), Q.OR)
+        print(q_objects)
+
         if q_objects:
             posts = Post.objects.filter(
                 q_objects).distinct().order_by(('-published_date'))
+            print(posts)
             return posts
         else:
             return False
