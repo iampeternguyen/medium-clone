@@ -17,7 +17,7 @@ urlpatterns = [
     path('unfollow/topic/<tag>', views.unfollow_topic, name='unfollow_topic'),
 
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post'),
-    path('search/', views.search_posts, name='search'),
+    path('search/', views.SearchListView.as_view(), name='search'),
     path('post/<int:pk>/edit/', views.PostEditView.as_view(), name='post_edit'),
     path('post/<int:pk>/cheer/', views.add_cheer, name='add_cheer'),
     path('post/<int:pk>/remove_cheer/', views.remove_cheer, name='remove_cheer'),

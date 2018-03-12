@@ -59,6 +59,24 @@ class DraftsListView(generic.ListView):
         return Post.objects.filter(published_date=None, author=self.request.user)
 
 
+class SearchListView(generic.ListView):
+    template_name = 'medium/search.html'
+    context_object_name = 'posts_list'
+    paginate_by = 10
+
+    def get_queryset(self):
+        search = self.request.GET.get('search')
+        return Post.objects.filter(Q(published_date__lte=timezone.now()),
+                                   Q(title__contains=search) | Q(content__contains=search)).order_by('-published_date')
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet
+        context['search'] = self.request.GET.get('search')
+        return context
+
+
 class NewPostView(LoginRequiredMixin, generic.CreateView):
     login_url = '/login/'
     redirect_field_name = 'medium/post.html'
@@ -174,17 +192,6 @@ def new_post(request):
     })
 
 # TODO make this a cbv or base it off of the pagenated view
-
-
-def search_posts(request):
-    if request.method == 'POST':
-        search = request.POST.get('search')
-        posts_list = Post.objects.filter(Q(published_date__lte=timezone.now()),
-                                         Q(title__contains=search) | Q(content__contains=search)).order_by('-published_date')[:10]
-
-        return render(request, 'medium/index.html', {'posts_list': posts_list})
-    else:
-        return HttpResponseRedirect(reverse('medium:index'))
 
 
 def user_login(request):
