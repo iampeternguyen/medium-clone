@@ -1,121 +1,122 @@
 a {
-    text-decoration: none;
-    color: #03a87c;
+  text-decoration: none;
+  color: #03a87c;
 }
 
 a:hover {
-    text-decoration: none;
-    color: #0c7a5c;
+  text-decoration: none;
+  color: #0c7a5c;
 }
 
 .post-title-input {
-    border: none;
-    resize: none;
-    margin: .67em 0;
-    height: 2em;
-    width: 100%;
-    font-size: 2.6em
+  border: none;
+  resize: none;
+  margin: 0.67em 0;
+  height: 2em;
+  width: 100%;
+  font-size: 2.6em;
 }
 
 .medium-editor-placeholder-relative {
-    color: lightgray;
-    font-style: normal;
+  color: lightgray;
+  font-style: normal;
 }
 
 .navbar {
-    padding-top: 1.5em;
+  padding-top: 1.5em;
+  height: 6em;
 }
 
 .navbar-title {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    text-align: center;
-    margin: 0 auto;
-    z-index: 0;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 0;
 }
 
 .navbar-right,
 .navbar-left {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .btn-nav {
-    border-radius: .5em;
-    border-style: solid;
-    padding: .5em 1em;
-    background-color: transparent;
+  border-radius: 0.5em;
+  border-style: solid;
+  padding: 0.5em 1em;
+  background-color: transparent;
 }
 
 .btn-register {
-    color: #03a87c;
-    border-color: #03a87c;
+  color: #03a87c;
+  border-color: #03a87c;
 }
 
 .btn-register:hover {
-    color: #0c7a5c;
-    border-color: #0c7a5c;
-    text-decoration: none;
+  color: #0c7a5c;
+  border-color: #0c7a5c;
+  text-decoration: none;
 }
 
 .btn-login {
-    color: #03a87c;
-    margin-right: 2em;
+  color: #03a87c;
+  margin-right: 2em;
 }
 
 .btn-login:hover {
-    text-decoration: none;
-    color: #0c7a5c;
+  text-decoration: none;
+  color: #0c7a5c;
 }
 
 .date {
-    color: grey
+  color: grey;
 }
 
 .welcome {
-    margin-right: 2em;
+  margin-right: 2em;
 }
 
 #featured {
-    position: relative;
-    max-height: 400px;
-    width: 100%;
+  position: relative;
+  max-height: 400px;
+  width: 100%;
 }
 
 #id_featured_image {
-    color: transparent;
+  color: transparent;
 }
 
-a>img:hover {
-    opacity: .7;
+a > img:hover {
+  opacity: 0.7;
 }
 
 .comment-container {
-    width: 50%;
-    padding: 1em;
+  width: 50%;
+  padding: 1em;
 }
 
 .comment-form-container {
-    width: 50%;
+  width: 50%;
 }
 
 #id_content {
-    height: 3em;
+  height: 3em;
 }
 
 .comment-form.asteriskField {
-    display: none;
+  display: none;
 }
 
 .comment-delete {
-    float: right;
+  float: right;
 }
 
 .panel-head {
-    padding: 0 1em;
+  padding: 0 1em;
 }
 
 .featured-on-index {
-    max-height: 300px;
+  max-height: 300px;
 }
